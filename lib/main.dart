@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recipes/recipe.dart';
+import 'package:recipes/recipe_detail.dart';
 
 void main() {
   runApp(const RecipeApp());
@@ -53,10 +55,53 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var appBar = AppBar(title: Text(widget.title));
-    var body = SafeArea(child: Container());
+
+    var child = ListView.builder(
+      itemCount: Recipe.samples.length,
+      itemBuilder: (BuildContext context, int index) {
+        return cardGuestureReact(Recipe.samples[index]);
+      },
+    );
+    var body = SafeArea(child: child);
     return Scaffold(
       appBar: appBar,
       body: body,
     );
+  }
+
+  Widget cardGuestureReact(Recipe recipe) {
+    var pageRoute = MaterialPageRoute(builder: (context) {
+      return RecipeDetail(recipe: recipe);
+    });
+    var gestureDetector = GestureDetector(
+      onTap: () {
+        Navigator.push(context, pageRoute);
+      },
+      child: buildRecipeCard(recipe),
+    );
+    return gestureDetector;
+  }
+
+  Widget buildRecipeCard(Recipe recipe) {
+    var cardChildTextStyle = const TextStyle(
+      fontSize: 20.0,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'Palatino',
+    );
+    var cardChild = Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(children: [
+          Image(image: AssetImage(recipe.imageUrl)),
+          const SizedBox(height: 14.0),
+          Text(
+            recipe.label,
+            style: cardChildTextStyle,
+          ),
+        ]));
+    return Card(
+        elevation: 2.0,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        child: cardChild);
   }
 }
